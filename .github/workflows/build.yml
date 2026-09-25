@@ -119,9 +119,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: BouncingScreensaver-${{ env.BUILD_VERSION }}
-          path: |
-            artifacts/release/*
-            artifacts/BouncingScreensaver-*.zip
+          path: artifacts/release/*
           if-no-files-found: error
 
       - name: Publish GitHub release for version tags

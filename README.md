@@ -116,7 +116,7 @@ The GitHub workflow runs on `windows-latest` and:
 7. installs NSIS on the ephemeral GitHub runner,
 8. builds `BouncingScreensaver-Setup.exe`,
 9. smoke-tests silent install, installed self-test and silent uninstall,
-10. uploads the release bundle as a workflow artifact,
+10. uploads the release files as a workflow artifact (GitHub provides the single download ZIP),
 11. creates a GitHub Release automatically for tags such as `v1.0.0`.
 
 A normal branch build uses a version such as `0.1.<run-number>`. A `v1.2.3` tag produces version `1.2.3`.
