@@ -107,10 +107,20 @@ internal sealed class SimulationHost : IDisposable
 
     private void InvalidateViews()
     {
+        var backgroundColor = ParseColor(_settings.BackgroundColor, Color.Black);
+        var flashColor = ParseColor(_settings.FlashColor, Color.FromArgb(123, 44, 255));
+        var flashAlpha = GetFlashAlpha();
+
         foreach (var view in _views)
         {
             if (!view.IsDisposed)
             {
+                if (view is RenderWindow renderWindow
+                    && renderWindow.RenderFrame(_state, _logo, backgroundColor, flashColor, flashAlpha))
+                {
+                    continue;
+                }
+
                 view.Invalidate();
             }
         }
