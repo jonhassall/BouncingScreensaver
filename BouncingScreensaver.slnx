@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src/BouncingScreensaver.Core/BouncingScreensaver.Core.csproj" />
+  <Project Path="src/BouncingScreensaver.Windows/BouncingScreensaver.Windows.csproj" />
+  <Project Path="tests/BouncingScreensaver.Core.Tests/BouncingScreensaver.Core.Tests.csproj" />
+</Solution>

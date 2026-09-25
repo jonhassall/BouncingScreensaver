@@ -1,0 +1,9 @@
+<Project Sdk="MSTest.Sdk/4.4.1">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/BouncingScreensaver.Core/BouncingScreensaver.Core.csproj" />
+  </ItemGroup>
+</Project>
