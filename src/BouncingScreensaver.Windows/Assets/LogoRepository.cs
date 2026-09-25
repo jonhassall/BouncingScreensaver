@@ -17,39 +17,58 @@ public sealed class LogoRepository
 
     public Image? TryLoadCached() => TryLoadPng(_cachePath);
 
-    public Task<Image?> RefreshFromSourceAsync(string sourcePath)
+    public Task<Image?> RefreshFromSourcesAsync(params string[] sourcePaths)
     {
         return Task.Run<Image?>(() =>
         {
-            try
+            foreach (var sourcePath in sourcePaths)
             {
-                var expanded = Environment.ExpandEnvironmentVariables(sourcePath.Trim());
-                if (string.IsNullOrWhiteSpace(expanded) ||
-                    !expanded.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
-                    !File.Exists(expanded))
+                if (string.IsNullOrWhiteSpace(sourcePath))
                 {
-                    return null;
+                    continue;
                 }
 
-                using var validated = TryLoadPng(expanded);
-                if (validated is null)
+                var refreshed = TryLoadAndCache(sourcePath);
+                if (refreshed is not null)
                 {
-                    return null;
+                    return refreshed;
                 }
-
-                var cacheDirectory = Path.GetDirectoryName(_cachePath)!;
-                Directory.CreateDirectory(cacheDirectory);
-                var temporary = _cachePath + ".tmp";
-                validated.Save(temporary, ImageFormat.Png);
-                File.Move(temporary, _cachePath, overwrite: true);
-
-                return new Bitmap(validated);
             }
-            catch
+
+            return null;
+        });
+    }
+
+    private Image? TryLoadAndCache(string sourcePath)
+    {
+        try
+        {
+            var expanded = Environment.ExpandEnvironmentVariables(sourcePath.Trim());
+            if (string.IsNullOrWhiteSpace(expanded) ||
+                !expanded.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+                !File.Exists(expanded))
             {
                 return null;
             }
-        });
+
+            using var validated = TryLoadPng(expanded);
+            if (validated is null)
+            {
+                return null;
+            }
+
+            var cacheDirectory = Path.GetDirectoryName(_cachePath)!;
+            Directory.CreateDirectory(cacheDirectory);
+            var temporary = _cachePath + ".tmp";
+            validated.Save(temporary, ImageFormat.Png);
+            File.Move(temporary, _cachePath, overwrite: true);
+
+            return new Bitmap(validated);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     private static Image? TryLoadPng(string path)

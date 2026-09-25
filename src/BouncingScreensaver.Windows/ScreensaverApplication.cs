@@ -8,6 +8,8 @@ namespace BouncingScreensaver.Windows;
 
 internal static class ScreensaverApplication
 {
+    private static readonly string SidecarLogoPath = Path.Combine(AppContext.BaseDirectory, "logo.png");
+
     public static void RunFullScreen(ScreensaverSettings settings)
     {
         var screens = Screen.AllScreens;
@@ -128,7 +130,7 @@ internal static class ScreensaverApplication
         ScreensaverSettings settings,
         Control owner)
     {
-        var refreshed = await repository.RefreshFromSourceAsync(settings.LogoSource);
+        var refreshed = await repository.RefreshFromSourcesAsync(settings.LogoSource, SidecarLogoPath);
         if (refreshed is not null && !owner.IsDisposed)
         {
             host.SetLogo(refreshed);

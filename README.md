@@ -58,7 +58,15 @@ The default source is:
 %ProgramData%\BouncingScreensaver\logo.png
 ```
 
-The installer creates the directory but deliberately does **not** install a logo. You can either copy a PNG there or point `LogoSource` at another local/UNC path.
+The installer creates the directory but deliberately does **not** install a logo. You can either copy a PNG there, place `logo.png` beside `BouncingScreensaver.scr`, or point `LogoSource` at another local/UNC path.
+
+The configured `LogoSource` is checked first. If it is unavailable or invalid, the screensaver also checks:
+
+```text
+C:\Program Files\BouncingScreensaver\logo.png
+```
+
+The sidecar logo is read-only from the screensaver's perspective, so it can be centrally replaced without changing registry settings.
 
 Example:
 
@@ -67,7 +75,7 @@ Example:
   --set-machine LogoSource "\\fileserver\Branding\Screensaver\logo.png"
 ```
 
-On startup, the screensaver immediately uses the cached logo if available, then checks the configured source in the background. This means an unavailable VPN/file share does not block the screensaver from starting.
+On startup, the screensaver immediately uses the cached logo if available, then checks the configured source followed by the sidecar logo in the background. This means an unavailable VPN/file share does not block the screensaver from starting.
 
 If there has never been a valid PNG, a generic rendered `LOGO` placeholder is shown. There is no embedded company artwork.
 

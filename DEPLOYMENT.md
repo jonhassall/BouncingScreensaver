@@ -36,14 +36,22 @@ Option A — place a PNG at the default local source:
 C:\ProgramData\BouncingScreensaver\logo.png
 ```
 
-Option B — configure a UNC source:
+Option B — place a PNG beside the installed screensaver:
+
+```text
+C:\Program Files\BouncingScreensaver\logo.png
+```
+
+The configured `LogoSource` is checked first. If it is unavailable or invalid, the screensaver checks this sidecar file next. The sidecar file is read-only to the application and can be replaced centrally.
+
+Option C — configure a UNC source:
 
 ```powershell
 & "$env:ProgramFiles\BouncingScreensaver\BouncingScreensaver.scr" `
   --set-machine LogoSource "\\fileserver\Branding\Screensaver\logo.png"
 ```
 
-The screensaver copies a validated PNG into each user's local cache. If the source is unavailable, the last valid cached image continues to be used.
+The screensaver copies a validated PNG into each user's local cache. If all configured sources are unavailable, the last valid cached image continues to be used.
 
 ## 3. Configure screensaver behaviour
 
