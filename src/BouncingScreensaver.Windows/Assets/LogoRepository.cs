@@ -19,7 +19,7 @@ public sealed class LogoRepository
 
     public Task<Image?> RefreshFromSourceAsync(string sourcePath)
     {
-        return Task.Run(() =>
+        return Task.Run<Image?>(() =>
         {
             try
             {
