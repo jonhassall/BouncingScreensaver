@@ -49,7 +49,7 @@ jobs:
           }
 
       - name: Test physics and topology
-        run: dotnet test tests/BouncingScreensaver.Core.Tests/BouncingScreensaver.Core.Tests.csproj -c Release
+        run: dotnet test --project tests/BouncingScreensaver.Core.Tests/BouncingScreensaver.Core.Tests.csproj -c Release
 
       - name: Publish self-contained Windows executable
         shell: pwsh
