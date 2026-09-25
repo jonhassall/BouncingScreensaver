@@ -8,7 +8,7 @@ namespace BouncingScreensaver.Windows;
 
 internal static class ScreensaverApplication
 {
-    private static readonly string SidecarLogoPath = Path.Combine(AppContext.BaseDirectory, "logo.png");
+    private static readonly string[] SidecarLogoPaths = GetSidecarLogoPaths();
 
     public static void RunFullScreen(ScreensaverSettings settings)
     {
@@ -130,7 +130,10 @@ internal static class ScreensaverApplication
         ScreensaverSettings settings,
         Control owner)
     {
-        var refreshed = await repository.RefreshFromSourcesAsync(settings.LogoSource, SidecarLogoPath);
+        var sourcePaths = new[] { settings.LogoSource }
+            .Concat(SidecarLogoPaths)
+            .ToArray();
+        var refreshed = await repository.RefreshFromSourcesAsync(sourcePaths);
         if (refreshed is not null && !owner.IsDisposed)
         {
             host.SetLogo(refreshed);
@@ -146,4 +149,17 @@ internal static class ScreensaverApplication
         screen.Bounds.Top,
         screen.Bounds.Width,
         screen.Bounds.Height);
+
+    private static string[] GetSidecarLogoPaths()
+    {
+        var paths = new List<string>();
+        var processDirectory = Path.GetDirectoryName(Environment.ProcessPath ?? string.Empty);
+        if (!string.IsNullOrWhiteSpace(processDirectory))
+        {
+            paths.Add(Path.Combine(processDirectory, "logo.png"));
+        }
+
+        paths.Add(Path.Combine(AppContext.BaseDirectory, "logo.png"));
+        return paths.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+    }
 }
