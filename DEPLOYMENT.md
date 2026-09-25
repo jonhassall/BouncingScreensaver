@@ -125,4 +125,4 @@ BouncingScreensaver-Setup.exe
 BouncingScreensaver-<version>.zip
 ```
 
-The ZIP also includes this deployment guide and the settings helper script.
+The ZIP also includes this deployment guide as `readme.txt` and the settings helper script.

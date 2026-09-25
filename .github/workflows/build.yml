@@ -112,7 +112,7 @@ jobs:
         shell: pwsh
         run: |
           Copy-Item scripts/Set-BouncingScreensaverSetting.ps1 artifacts/release/
-          Copy-Item DEPLOYMENT.md artifacts/release/
+          Copy-Item DEPLOYMENT.md artifacts/release/readme.txt
           Compress-Archive -Path artifacts/release/* -DestinationPath "artifacts/BouncingScreensaver-$env:BUILD_VERSION.zip" -Force
 
       - name: Upload build artifacts
