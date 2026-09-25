@@ -1,6 +1,5 @@
 Unicode true
 RequestExecutionLevel admin
-SetRegView 64
 
 !include "MUI2.nsh"
 !include "x64.nsh"
@@ -20,6 +19,8 @@ SetRegView 64
 !define PRODUCT_KEY "Software\BouncingScreensaver"
 !define UNINSTALL_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\BouncingScreensaver"
 
+Var CommonDataDir
+
 Name "${PRODUCT_NAME}"
 OutFile "${OUTPUT_DIR}\BouncingScreensaver-Setup.exe"
 InstallDir "$PROGRAMFILES64\BouncingScreensaver"
@@ -37,10 +38,17 @@ ShowUninstDetails show
 !insertmacro MUI_LANGUAGE "English"
 
 Function .onInit
+  SetRegView 64
+  ExpandEnvStrings $CommonDataDir "%ProgramData%"
   ${IfNot} ${RunningX64}
     MessageBox MB_ICONSTOP "${PRODUCT_NAME} requires 64-bit Windows."
     Abort
   ${EndIf}
+FunctionEnd
+
+Function un.onInit
+  SetRegView 64
+  ExpandEnvStrings $CommonDataDir "%ProgramData%"
 FunctionEnd
 
 Section "Install"
@@ -48,10 +56,10 @@ Section "Install"
   File /oname=BouncingScreensaver.scr "${SCR_PATH}"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
-  CreateDirectory "$COMMONAPPDATA\BouncingScreensaver"
+  CreateDirectory "$CommonDataDir\BouncingScreensaver"
 
   WriteRegStr HKLM "${PRODUCT_KEY}" "InstallDirectory" "$INSTDIR"
-  WriteRegStr HKLM "${PRODUCT_KEY}" "LogoSource" "$COMMONAPPDATA\BouncingScreensaver\logo.png"
+  WriteRegStr HKLM "${PRODUCT_KEY}" "LogoSource" "$CommonDataDir\BouncingScreensaver\logo.png"
   WriteRegDWORD HKLM "${PRODUCT_KEY}" "SpeedPxPerSecond" 220
   WriteRegDWORD HKLM "${PRODUCT_KEY}" "LogoWidthPercent" 15
   WriteRegStr HKLM "${PRODUCT_KEY}" "BackgroundColor" "#000000"
@@ -79,6 +87,6 @@ Section "Uninstall"
   DeleteRegKey HKLM "${UNINSTALL_KEY}"
   DeleteRegKey HKLM "${PRODUCT_KEY}"
 
-  ; Intentionally preserve $COMMONAPPDATA\BouncingScreensaver so an externally
+  ; Intentionally preserve $CommonDataDir\BouncingScreensaver so an externally
   ; managed logo is not deleted during upgrades/uninstall.
 SectionEnd
