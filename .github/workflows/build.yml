@@ -108,11 +108,23 @@ jobs:
           $uninstall = Start-Process -FilePath $uninstaller -ArgumentList '/S' -Wait -PassThru
           if ($uninstall.ExitCode -ne 0) { throw "Silent uninstaller returned $($uninstall.ExitCode)." }
 
-      - name: Add deployment helper and documentation to release bundle
+      - name: Add deployment helper and plain-text readme to release bundle
         shell: pwsh
         run: |
           Copy-Item scripts/Set-BouncingScreensaverSetting.ps1 artifacts/release/
-          Copy-Item DEPLOYMENT.md artifacts/release/readme.txt
+          $markdown = [IO.File]::ReadAllText('DEPLOYMENT.md', [Text.Encoding]::UTF8)
+          $readme = $markdown
+          $readme = [regex]::Replace($readme, '(?m)^#{1,6}\s*', '')
+          $readme = [regex]::Replace($readme, '(?m)^\s*```[^\r\n]*\r?\n', '')
+          $readme = [regex]::Replace($readme, '(?m)^\s*```\s*$', '')
+          $readme = [regex]::Replace($readme, '\*\*([^*]+)\*\*', '$1')
+          $readme = [regex]::Replace($readme, '`([^`\r\n]+)`', '$1')
+          $readme = [regex]::Replace($readme, '\[([^\]]+)\]\([^)]+\)', '$1')
+          $readme = [regex]::Replace($readme, '\r?\n{3,}', "`r`n`r`n")
+          if ($readme -match '(?m)^\s*#{1,6}\s|```|\*\*|\[[^\]]+\]\([^)]+\)') {
+            throw 'Generated readme.txt still contains Markdown markup.'
+          }
+          [IO.File]::WriteAllText('artifacts/release/readme.txt', $readme.Trim() + "`r`n", [Text.UTF8Encoding]::new($false))
           Compress-Archive -Path artifacts/release/* -DestinationPath "artifacts/BouncingScreensaver-$env:BUILD_VERSION.zip" -Force
 
       - name: Upload build artifacts
