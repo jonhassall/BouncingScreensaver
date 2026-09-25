@@ -17,6 +17,8 @@ using DxgiAlphaMode = Vortice.DXGI.AlphaMode;
 using DxgiFormat = Vortice.DXGI.Format;
 using GdiColor = System.Drawing.Color;
 using GdiPixelFormat = System.Drawing.Imaging.PixelFormat;
+using GdiSize = System.Drawing.Size;
+using D3DFeatureLevel = Vortice.Direct3D.FeatureLevel;
 
 namespace BouncingScreensaver.Windows.UI;
 
@@ -25,14 +27,14 @@ namespace BouncingScreensaver.Windows.UI;
 /// </summary>
 internal sealed class Direct2DRenderSurface : IDisposable
 {
-    private static readonly FeatureLevel[] FeatureLevels =
+    private static readonly D3DFeatureLevel[] FeatureLevels =
     [
-        FeatureLevel.Level_11_0,
-        FeatureLevel.Level_10_1,
-        FeatureLevel.Level_10_0,
-        FeatureLevel.Level_9_3,
-        FeatureLevel.Level_9_2,
-        FeatureLevel.Level_9_1
+        D3DFeatureLevel.Level_11_0,
+        D3DFeatureLevel.Level_10_1,
+        D3DFeatureLevel.Level_10_0,
+        D3DFeatureLevel.Level_9_3,
+        D3DFeatureLevel.Level_9_2,
+        D3DFeatureLevel.Level_9_1
     ];
 
     private readonly IntPtr _hwnd;
@@ -48,7 +50,7 @@ internal sealed class Direct2DRenderSurface : IDisposable
     private int _width;
     private int _height;
 
-    public Direct2DRenderSurface(IntPtr hwnd, Size size)
+    public Direct2DRenderSurface(IntPtr hwnd, GdiSize size)
     {
         if (hwnd == IntPtr.Zero)
         {
@@ -107,7 +109,7 @@ internal sealed class Direct2DRenderSurface : IDisposable
         _logoBitmap = image is null ? null : CreateBitmap(image);
     }
 
-    public void Resize(Size size)
+    public void Resize(GdiSize size)
     {
         var width = Math.Max(1, size.Width);
         var height = Math.Max(1, size.Height);
@@ -278,7 +280,7 @@ internal sealed class Direct2DRenderSurface : IDisposable
             creationFlags,
             FeatureLevels,
             out ID3D11Device device,
-            out FeatureLevel _,
+            out D3DFeatureLevel _,
             out ID3D11DeviceContext context);
 
         if (result.Failure)
