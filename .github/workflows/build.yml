@@ -95,8 +95,14 @@ jobs:
           if (-not (Test-Path $installedScr)) { throw "Installed .scr was not found." }
           if (Test-Path "$env:ProgramFiles\BouncingScreensaver\logo.png") { throw "Logo must not be installed with the binary." }
 
-          $test = Start-Process -FilePath $installedScr -ArgumentList '--self-test' -Wait -PassThru
-          if ($test.ExitCode -ne 0) { throw "Installed screensaver self-test failed." }
+          $selfTestExe = Join-Path $env:TEMP 'BouncingScreensaver-self-test.exe'
+          Copy-Item $installedScr $selfTestExe -Force
+          try {
+            $test = Start-Process -FilePath $selfTestExe -ArgumentList '--self-test' -Wait -PassThru
+            if ($test.ExitCode -ne 0) { throw "Installed screensaver self-test failed." }
+          } finally {
+            Remove-Item $selfTestExe -Force -ErrorAction SilentlyContinue
+          }
 
           $uninstaller = "$env:ProgramFiles\BouncingScreensaver\Uninstall.exe"
           $uninstall = Start-Process -FilePath $uninstaller -ArgumentList '/S' -Wait -PassThru
